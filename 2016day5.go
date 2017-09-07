@@ -4,6 +4,7 @@ import "fmt"
 import "crypto/md5"
 import "os"
 import "strconv"
+import "sync/atomic"
 
 type AnswerPair struct {
 	Position byte
@@ -13,54 +14,49 @@ type AnswerPair struct {
 func main() {
 	input := []byte(os.Args[1])
 	const threads = 4
-	testInts := make(chan int64, threads)
+	testInt := int64(-1)
 	answers := make(chan AnswerPair, threads)
 	for i := int64(0); i < threads; i++ {
-		go checkInts(input, testInts, answers)
+		go checkInts(input, &testInt, answers)
 	}
 
-	go func() {
-		answer := make([]byte, 8)
-		for {
-			pair := <-answers
-			if answer[pair.Position] != 0 {
-				continue
-			}
-			answer[pair.Position] = pair.OutputChar
-			numAnswers := 0
-			for _, b := range(answer) {
-				if b == 0 {
-					fmt.Print("_")
-				} else {
-					fmt.Printf("%c", b)
-					numAnswers += 1
-				}
-			}
-			fmt.Println()
-			if numAnswers == 8 {
-				os.Exit(0)
+	answer := make([]byte, 8)
+	for {
+		pair := <-answers
+		if answer[pair.Position] != 0 {
+			continue
+		}
+		answer[pair.Position] = pair.OutputChar
+		numAnswers := 0
+		for _, b := range(answer) {
+			if b == 0 {
+				fmt.Print("_")
+			} else {
+				fmt.Printf("%c", b)
+				numAnswers += 1
 			}
 		}
-	}()
-
-	for i := int64(0); ; i++ {
-		testInts <-i
+		fmt.Println()
+		if numAnswers == 8 {
+			break
+		}
 	}
 }
 
 const maxInt = int64(^uint64(0) >> 1)
 
-func checkInts(input []byte, testInts chan int64, answers chan AnswerPair) {
+func checkInts(input []byte, testIntp *int64, answers chan AnswerPair) {
 	maxIntLen := len(strconv.FormatInt(maxInt, 10))
 	test := make([]byte, 0, len(input) + maxIntLen)
 	test = append(test, input...)
 	buffer := make([]byte, maxIntLen)
+	digest := md5.New()
 	for {
-		testInt := <-testInts
-		//test := strconv.AppendInt(buffer, testInt, 10)
+		testInt := atomic.AddInt64(testIntp, 1)
 		test = formatBits(test, len(input), buffer, uint64(testInt), testInt < 0)
-		//fmt.Printf("testing %s %d %d\n", test, len(test), cap(test))
-		hash := md5.Sum(test)
+		digest.Reset()
+		digest.Write(test)
+		hash := digest.Sum(nil)
 		if hash[0] == 0 && hash[1] == 0 && hash[2] & 0xf0 == 0 {
 			position := hash[2] & 0x0f
 			if position < 8 {
