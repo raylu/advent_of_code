@@ -7,13 +7,17 @@ def main():
 		wire1 = next(f).rstrip().split(',')
 		wire2 = next(f).rstrip().split(',')
 
-	seen = frozenset(coords(wire1))
-	min_dist = float('inf')
-	for x, y in coords(wire2):
-		if (x, y) in seen:
-			dist = abs(x) + abs(y)
-			min_dist = min(dist, min_dist)
-	print(min_dist)
+	seen = {}
+	for steps, coord in enumerate(coords(wire1)):
+		seen[coord] = steps + 1
+
+	min_steps = float('inf')
+	for steps, coord in enumerate(coords(wire2)):
+		wire1_steps = seen.get(coord)
+		if wire1_steps is not None:
+			steps += 1 + wire1_steps
+			min_steps = min(steps, min_steps)
+	print(min_steps)
 
 def coords(wire):
 	x = y = 0
