@@ -1,21 +1,26 @@
 #!/usr/bin/env python3
 
-import collections
 import fileinput
 
 def main():
-	tree = collections.defaultdict(list)
+	tree = {}
 	for line in fileinput.input():
 		left, right = line.rstrip().split(')', 1)
-		tree[left].append(right)
+		tree[right] = left
 
-	print(count_orbits(tree, 'COM', 0))
+	you_path = list(path_to_root(tree, tree['YOU']))
+	you_path_nodes = frozenset(you_path)
+	for i, node in enumerate(path_to_root(tree, tree['SAN'])):
+		if node in you_path_nodes:
+			print(i + you_path.index(node))
+			break
+	else:
+		raise AssertionError()
 
-def count_orbits(tree, node, depth):
-	total = depth
-	for children in tree[node]:
-		total += count_orbits(tree, children, depth + 1)
-	return total
+def path_to_root(tree, node):
+	while node != 'COM':
+		yield node
+		node = tree[node]
 
 if __name__ == '__main__':
 	main()
