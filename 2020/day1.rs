@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -6,14 +6,18 @@ use std::path::Path;
 fn main() {
 	let nums = read_lines("day1_input");
 	let target = 2020;
-	let mut complements: HashSet<i32> = vec![].into_iter().collect();
-	for num in &nums {
-		let complement = target - num;
-		if complements.contains(num) {
-			println!("{} + {} = {}", num, complement, target);
+	let mut complements: HashMap<i32, i32> = HashMap::new();
+	for (i, num1) in nums.iter().enumerate() {
+		for j in i+1..nums.len() {
+			let num2 = nums[j];
+			let sum = num1 + num2;
+			let complement = target - sum;
+			complements.insert(complement, *num1);
 		}
-		if !complements.insert(complement) {
-			panic!("found {} twice", num);
+	}
+	for num in nums {
+		if let Some(&num1) = complements.get(&num) {
+			println!("{} + {} + {}", num, num1, target - num - num1);
 		}
 	}
 }
