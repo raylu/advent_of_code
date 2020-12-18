@@ -4,8 +4,8 @@ use std::path::Path;
 
 #[derive(Debug)]
 struct Line {
-	low: i32,
-	high: i32,
+	low: usize,
+	high: usize,
 	letter: char,
 	password: String,
 }
@@ -22,24 +22,19 @@ fn main() {
 		let letter: char = rule_split.next().unwrap().parse().unwrap();
 
 		rule_split = range.splitn(2, '-');
-		let low: i32 = rule_split.next().unwrap().parse().unwrap();
-		let high: i32 = rule_split.next().unwrap().parse().unwrap();
+		let low: usize = rule_split.next().unwrap().parse().unwrap();
+		let high: usize = rule_split.next().unwrap().parse().unwrap();
 
 		Line{low: low, high: high, letter: letter, password: password}
 	});
 
 	let mut valid = 0;
 	for line in line_structs {
-		let mut count = 0;
-		for c in line.password.chars() {
-			if c == line.letter {
-				count += 1;
-				if count > line.high {
-					break;
-				}
-			}
-		}
-		if line.low <= count && count <= line.high {
+		let password = line.password.as_bytes();
+		let mut byte_buf = [0; 1];
+		line.letter.encode_utf8(&mut byte_buf);
+		let letter: u8 = byte_buf[0];
+		if (password[line.low-1] == letter) ^ (password[line.high-1] == letter) {
 			valid += 1;
 		}
 	}
