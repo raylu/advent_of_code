@@ -15,5 +15,19 @@ def part1():
 			depth -= num
 	print(horizontal, depth, horizontal * depth)
 
+def part2():
+	horizontal = aim = depth = 0
+	for line in utils.iter_lines(2):
+		command, num = line.rstrip().split()
+		num = int(num)
+		if command == 'forward':
+			horizontal += num
+			depth += num * aim
+		elif command == 'down':
+			aim += num
+		elif command == 'up':
+			aim -= num
+	print(horizontal, depth, horizontal * depth)
+
 if __name__ == '__main__':
-	part1()
+	part2()
