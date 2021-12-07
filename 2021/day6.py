@@ -2,8 +2,10 @@
 
 import collections
 
+import utils
+
 def part1():
-	state = read_state()
+	state = utils.read_int_line(6)
 	for _ in range(80):
 		new_state = []
 		for i, fish in enumerate(state):
@@ -16,7 +18,7 @@ def part1():
 	print(len(state))
 
 def part2():
-	state = read_state()
+	state = utils.read_int_line(6)
 	fish_counts = collections.Counter(state)
 	for _ in range(256):
 		new_counts = {}
@@ -31,10 +33,6 @@ def part2():
 		new_counts[6] += new_sixes
 		fish_counts = new_counts
 	print(sum(new_counts.values()))
-
-def read_state():
-	with open('day6_input', 'r', encoding='ascii') as f:
-		return list(map(int, f.read().rstrip().split(',')))
 
 if __name__ == '__main__':
 	part2()
