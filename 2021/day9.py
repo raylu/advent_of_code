@@ -11,7 +11,7 @@ def part1():
 		for j, c in enumerate(row):
 			for di, dj in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
 				if 0 <= i + di < len(grid) and 0 <= j + dj < len(row) and \
-						grid[i+di][j+dj] < c:
+						grid[i+di][j+dj] <= c:
 					break
 			else: # low point
 				risk_level += c + 1
