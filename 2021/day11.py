@@ -11,6 +11,16 @@ def part1():
 		flashes += step(octopi)
 	print(flashes)
 
+def part2():
+	octopi = [list(map(int, line)) for line in utils.iter_lines(11)]
+	num_steps = 0
+	while True:
+		flashes = step(octopi)
+		num_steps += 1
+		if flashes == 100:
+			print(num_steps)
+			break
+
 directions = [
 	( 0,  1),
 	( 1,  0),
@@ -41,4 +51,4 @@ def step(octopi):
 	return len(flashed)
 
 if __name__ == '__main__':
-	part1()
+	part2()
