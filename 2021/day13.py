@@ -3,6 +3,17 @@
 import utils
 
 def part1():
+	paper, folds = parse_input()
+	paper = fold(paper, *folds[0])
+	print(sum(row.count('#') for row in paper))
+
+def part2():
+	paper, folds = parse_input()
+	for fold_inst in folds:
+		paper = fold(paper, *fold_inst)
+	print_paper(paper)
+
+def parse_input():
 	dots = []
 	max_x = max_y = 0
 	folds = []
@@ -25,9 +36,7 @@ def part1():
 	paper = [['.'] * (max_x + 1) for _ in range(max_y + 1)]
 	for x, y in dots:
 		paper[y][x] = '#'
-
-	paper = fold(paper, *folds[0])
-	print(sum(row.count('#') for row in paper))
+	return paper, folds
 
 def fold(paper, axis, pos):
 	if axis == 'y':
@@ -58,4 +67,4 @@ def print_paper(paper):
 		print(''.join(row))
 
 if __name__ == '__main__':
-	part1()
+	part2()
