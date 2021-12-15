@@ -6,6 +6,25 @@ import utils
 
 def part1():
 	cave = [list(map(int, line)) for line in utils.iter_lines(15)]
+	print(min_risk(cave))
+
+def part2():
+	cave = [list(map(int, line)) for line in utils.iter_lines(15)]
+	width = len(cave[0])
+	height = len(cave)
+	big_cave = [[0] * width * 5 for _ in range(height * 5)]
+	for tile_y in range(5):
+		for tile_x in range(5):
+			modifier = tile_x + tile_y
+			for y in range(height):
+				for x in range(width):
+					val = cave[y][x] + modifier
+					while val > 9:
+						val -= 9
+					big_cave[tile_y * height + y][tile_x * width + x] = val
+	print(min_risk(big_cave))
+
+def min_risk(cave):
 	width = len(cave[0])
 	height = len(cave)
 	goal = (width-1, height-1)
@@ -33,10 +52,10 @@ def part1():
 	
 	risk = 0
 	while current in path:
-		current = path[current]
 		x, y = current
 		risk += cave[y][x]
-	print(risk)
+		current = path[current]
+	return risk
 
 if __name__ == '__main__':
-	part1()
+	part2()
