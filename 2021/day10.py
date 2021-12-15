@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import functools
-import operator
-
 import utils
 
 cardinal_directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]

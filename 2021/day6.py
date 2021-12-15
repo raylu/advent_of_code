@@ -8,7 +8,7 @@ def part1():
 	state = utils.read_int_line(6)
 	for _ in range(80):
 		new_state = []
-		for i, fish in enumerate(state):
+		for fish in state:
 			if fish == 0:
 				new_state.append(8)
 				new_state.append(6)

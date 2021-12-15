@@ -34,7 +34,7 @@ def min_risk(cave):
 	f_score = {(0, 0): width + height}
 	open_set = list(f_score.items())
 	while open_set:
-		current, score = heapq.heappop(open_set)
+		current, _ = heapq.heappop(open_set)
 		if current == goal:
 			break
 		for dx, dy in [(-1, 0), (0, -1), (1, 0), (0, 1)]:
@@ -49,7 +49,7 @@ def min_risk(cave):
 					f_score[neighbor] = neighbor_f_score
 					if not any(coord == neighbor for coord, _ in open_set):
 						heapq.heappush(open_set, (neighbor, neighbor_f_score))
-	
+
 	risk = 0
 	while current in path:
 		x, y = current
