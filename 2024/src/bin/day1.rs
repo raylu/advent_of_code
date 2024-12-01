@@ -1,18 +1,29 @@
+use std::collections::HashMap;
+
 use aoc2024::read_lines;
 
 fn main() {
-    let mut l1 = vec![];
-    let mut l2 = vec![];
+    let mut l1: Vec<i32> = vec![];
+    let mut l2: HashMap<i32, i32> = HashMap::with_capacity(1000);
     for line in read_lines("day1.txt") {
-        let (first, second) = line.split_once("   ").unwrap();
-        l1.push(first.parse::<i32>().unwrap());
-        l2.push(second.parse::<i32>().unwrap());
+        let (left, right) = line.split_once("   ").unwrap();
+        l1.push(left.parse::<i32>().unwrap());
+        let right = right.parse::<i32>().unwrap();
+        match l2.get_mut(&right) {
+            Some(freq) => {
+                *freq += 1;
+            }
+            None => {
+                l2.insert(right, 1);
+            }
+        }
     }
-    l1.sort_unstable();
-    l2.sort_unstable();
-    let total_distance = l1.into_iter().zip(l2.into_iter()).map(|it| {
-        let (first, second) = it;
-        (first - second).abs()
-    }).sum::<i32>();
-    println!("total distance: {}", total_distance);
+    let similarity = l1
+        .into_iter()
+        .map(|left| {
+            let freq = l2.get(&left).map_or(0, |freq| *freq);
+            left * freq
+        })
+        .sum::<i32>();
+    println!("similarity: {}", similarity);
 }
