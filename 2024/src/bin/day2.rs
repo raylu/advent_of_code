@@ -4,24 +4,37 @@ fn main() {
     let safe = read_lines("day2.txt")
         .map(|line| {
             let report: Vec<i32> = line.split(' ').map(|x| x.parse::<i32>().unwrap()).collect();
-            // adjacent levels >= 1 and <= 3
-            if !AdjacentPairs::new(&report).all(|(prev, cur)| {
-                let diff = cur.abs_diff(prev);
-                diff >= 1 && diff <= 3
-            }) {
-                return 0;
-            }
-            // all increasing/decreasing
-            if AdjacentPairs::new(&report).all(|(prev, cur)| cur > prev)
-                || AdjacentPairs::new(&report).all(|(prev, cur)| cur < prev)
-            {
+            if is_safe(&report) {
                 1
             } else {
+                for i in 0..report.len() {
+                    let dampened = report[0..i]
+                        .iter()
+                        .cloned()
+                        .chain(report[i + 1..].iter().cloned())
+                        .collect();
+                    if is_safe(&dampened) {
+                        return 1;
+                    }
+                }
                 0
             }
         })
         .sum::<i32>();
     println!("safe: {}", safe);
+}
+
+fn is_safe(report: &Vec<i32>) -> bool {
+    // adjacent levels >= 1 and <= 3
+    if !AdjacentPairs::new(report).all(|(prev, cur)| {
+        let diff = cur.abs_diff(prev);
+        diff >= 1 && diff <= 3
+    }) {
+        return false;
+    }
+    // all increasing/decreasing
+    return AdjacentPairs::new(report).all(|(prev, cur)| cur > prev)
+        || AdjacentPairs::new(report).all(|(prev, cur)| cur < prev);
 }
 
 struct AdjacentPairs<'a, T> {
