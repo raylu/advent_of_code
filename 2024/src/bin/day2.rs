@@ -24,7 +24,7 @@ fn is_safe(report: &Vec<i32>) -> bool {
 	// adjacent levels >= 1 and <= 3
 	if !AdjacentPairs::new(report).all(|(prev, cur)| {
 		let diff = cur.abs_diff(prev);
-		diff >= 1 && diff <= 3
+		(1..=3).contains(&diff)
 	}) {
 		return false;
 	}
@@ -42,7 +42,7 @@ impl<'a, T> AdjacentPairs<'a, T> {
 		Self { vector, index: 1 }
 	}
 }
-impl<'a, T> Iterator for AdjacentPairs<'a, T>
+impl<T> Iterator for AdjacentPairs<'_, T>
 where
 	T: Copy,
 {
